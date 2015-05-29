@@ -1,0 +1,60 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Build Plans</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_build-plans.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="toc"><div id="main"><div id="content"><div class="section" id="section_build-plans"><h1 class="section_header"><a name="build-plans"></a>Build Plans</h1><p>Each <a href="jobs.html">Job</a> has a single build plan. When a build of a job is
+created, the plan determines what happens.</p><p>A build plan is a sequence of <em>steps</em> to execute. These steps may fetch
+down or update <a href="resources.html">Resources</a>, or execute
+<a href="tasks.html">Tasks</a>.</p><p>A new build of the job is scheduled whenever <a href="get-step.html"><code>get</code>: fetch a resource</a> steps with
+<code>trigger: true</code> have new versions available.</p><p>To visualize the job in the pipeline, resources that appear as <code>get</code>
+steps are drawn as inputs, and resources that appear in <code>put</code> steps
+appear as outputs.</p><p>A simple unit test job may look something like:</p><pre class="verbatim">name: banana-unit
+plan:
+- get: banana
+  trigger: true
+- task: unit
+  file: banana/task.yml</pre><p>This job says: <a href="get-step.html"><code>get</code></a> the @codebanana resource,
+and run a <a href="task-step.html"><code>task</code></a> step called @codeunit, using
+the configuration from the <code>task.yml</code> file fetched from the @codebanana
+step.</p><p>When new versions of <code>banana</code> are detected, a new build of
+<code>banana-unit</code> will be scheduled, because we&#39;ve set @codetrigger: true.</p><p>Jobs can depend on resources that are produced by or pass through upstream
+jobs, by configuring <code>passed: [job-a, job-b]</code> on the
+<a href="get-step.html"><code>get</code></a> step.</p><p>Putting these pieces together, if we were to propagate <code>banana</code> from
+the above example into an integration suite with another <code>apple</code>
+component (pretending we also defined its <code>apple-unit</code> job), the
+configuration for the integration job may look something like:</p><pre class="verbatim">name: fruit-basket-integration
+plan:
+- aggregate:
+  - get: banana
+    trigger: true
+    passed: [banana-unit]
+  - get: apple
+    trigger: true
+    passed: [apple-unit]
+  - get: integration-suite
+    trigger: true
+- task: integration
+  file: integration-suite/task.yml</pre><p>Note the use of the <a href="aggregate-step.html"><code>aggregate</code></a> step to
+collect multiple inputs at once.</p><p>With this example we&#39;ve configured a tiny pipeline that will automatically
+run unit tests for two components, and continuously run integration tests
+against whichever versions pass both unit tests.</p><p>This can be further chained into later &quot;stages&quot; of your pipeline; for
+example, you may want to continuously deliver an artifact built from
+whichever components pass <code>fruit-basket-integration</code>.</p><p>To push artifacts, you would use a <a href="put-step.html"><code>put</code></a> step
+that targets the destination resource. For example:</p><pre class="verbatim">name: deliver-food
+plan:
+- aggregate:
+  - get: banana
+    trigger: true
+    passed: [fruit-basket-integration]
+  - get: apple
+    trigger: true
+    passed: [fruit-basket-integration]
+  - get: baggy
+    trigger: true
+- task: shrink-wrap
+  file: baggy/shrink-wrap.yml
+- put: bagged-food
+  params:
+    bag: shrink-wrap/bagged.tgz</pre><p>This presumes that there&#39;s a <code>bagged-food</code>
+<a href="resources.html">resource</a> defined, which understands that the
+<code>bag</code> parameter points to a file to ship up to the resource&#39;s location.</p><p>Note that both <code>banana</code> and @codeapple list the same job as an
+upstream dependency. This guarantees that <code>deliver-food</code> will only
+trigger when a version of both of these dependencies pass through the same
+build of the integration job (and transitively, their individual unit jobs).
+This prevents bad apples or bruised bananas from being delivered. (I&#39;m sorry.)</p><p>For a reference on each type of step, read on.</p><ol class="toc" id="table_of_contents"><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>On this page:</h4><ol class="toc"><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol><h4>Up one level:</h4><ol class="toc"><li><a href="index.html">Concourse: CI that scales with your project</a><ol><li><a href="what-and-why.html">What &amp; Why</a><ol><li><a href="what-and-why.html#simple">Simple</a></li><li><a href="what-and-why.html#usable">Usable</a></li><li><a href="what-and-why.html#isolated-builds">Isolated Builds</a></li><li><a href="what-and-why.html#scalable-reproducible-deployment">Scalable, reproducible deployment</a></li><li><a href="what-and-why.html#flexible">Flexible</a></li><li><a href="what-and-why.html#local-iteration">Local iteration</a></li><li><a href="what-and-why.html#bootstrapped">Bootstrapped</a></li></ol></li><li><a href="concepts.html">Concepts</a><ol><li><a href="tasks.html">Tasks</a><ol><li><a href="tasks.html#runtime-environment">Runtime Environment</a></li></ol></li><li><a href="resources.html">Resources</a></li><li><a href="jobs.html">Jobs</a><ol><li><a href="jobs.html#job-builds">Builds</a></li></ol></li></ol></li><li><a href="getting-started.html">Getting Started</a><ol><li><a href="getting-started.html#deploying-with-vagrant">Provisioning with Vagrant</a></li><li><a href="getting-started.html#deploying-with-bosh">Deploying a cluster with BOSH</a><ol><li><a href="getting-started.html#setting-up-the-infrastructure">Setting up the infrastructure</a><ol><li><a href="getting-started.html#bosh-lite">BOSH-Lite</a></li><li><a href="getting-started.html#aws">AWS</a></li><li><a href="getting-started.html#vsphere-openstack">vSphere, OpenStack</a></li></ol></li><li><a href="getting-started.html#deploying-and-upgrading-concourse">Deploying and upgrading Concourse</a><ol><li><a href="getting-started.html#upload-the-stemcell">Upload the stemcell</a></li><li><a href="getting-started.html#upload-the-concourse-and-garden-releases">Upload the Concourse &amp; Garden releases</a></li><li><a href="getting-started.html#bosh-properties">Configure &amp; Deploy</a></li></ol></li></ol></li></ol></li><li><a href="fly-cli.html">The Fly CLI</a><ol><li><a href="fly-cli.html#targeting-your-concourse">Targeting your Concourse</a></li><li><a href="fly-cli.html#fly-save-target"><code>save-target</code>: Saving Concourse Targets</a></li><li><a href="fly-cli.html#fly-execute"><code>execute</code>: Submitting Local Tasks</a><ol><li><a href="fly-cli.html#multiple-inputs-to-locally-submitted-tasks">Multiple Inputs to Locally Submitted Tasks</a></li></ol></li><li><a href="fly-cli.html#fly-configure"><code>configure</code>: Configuring Pipelines</a><ol><li><a href="fly-cli.html#parameters">Parameters</a></li></ol></li><li><a href="fly-cli.html#fly-destroy-pipeline"><code>destroy-pipeline</code>: Removing Pipelines</a></li><li><a href="fly-cli.html#fly-intercept"><code>intercept</code>: Accessing a running or recent build&#39;s steps</a></li><li><a href="fly-cli.html#fly-sync"><code>sync</code>: Update your local copy of @codefly</a></li><li><a href="fly-cli.html#fly-watch"><code>watch</code>: View logs of in-progress builds</a></li></ol></li><li><a href="running-tasks.html">Tasks</a><ol><li><a href="running-tasks.html#configuring-tasks">Configuring a Task</a></li><li><a href="running-tasks.html#fly">Running tasks with <code>fly</code></a></li></ol></li><li><a href="pipelines.html">Piplines</a><ol><li><a href="configuring-resources.html"><code>resources</code>: Objects flowing through the pipeline</a></li><li><a href="configuring-jobs.html"><code>jobs</code>: Plans to execute against resources</a></li><li><a href="configuring-groups.html"><code>groups</code>: Splitting up your pipeline into sections</a></li></ol></li><li><a href="build-plans.html">Build Plans</a><ol><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol></li><li><a href="implementing-resources.html">Implementing a Resource</a><ol><li><a href="implementing-resources.html#check:-check-for-new-versions."><code>check</code>: Check for new versions.</a></li><li><a href="implementing-resources.html#in:-fetch-a-given-resource."><code>in</code>: Fetch a given resource.</a></li><li><a href="implementing-resources.html#out:-update-a-resource."><code>out</code>: Update a resource.</a></li></ol></li></ol></li></ol></div></body></html>

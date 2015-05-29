@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>groups</code>: Splitting up your pipeline into sections</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_configuring-groups.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_configuring-groups"><h1 class="section_header"><a name="configuring-groups"></a><code>groups</code>: Splitting up your pipeline into sections</h1><p></p><p>A pipeline may optionally contain a section called <code>groups</code>. As more
+resources and jobs are added to a pipeline it can become difficult to navigate.
+Pipeline groups allow you to group jobs together under a header and have them
+show on different tabs in the user interface. Groups have no functional effect
+on your pipeline.</p><p>A simple grouping for the pipeline above may look like:</p><pre class="verbatim">groups:
+- name: tests
+  jobs:
+  - controller-mysql
+  - controller-postgres
+  - worker
+  - integration
+- name: deploy
+  jobs:
+  - deploy</pre><p>This would display two tabs at the top of the home page: &quot;tests&quot; and &quot;deploy&quot;.</p><p>For a real world example of how groups can be used to simplify navigation and
+provide logical grouping, see the groups used at the top of the page in the
+<a href="https://ci.concourse.ci">Concourse pipeline</a>.</p><p>Each configured group consists of the following attributes:</p><div class="definition"><p><a name="name"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-groups.html#name">name</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> The name of the group. This should be short and simple as
+it will be used as the tab name for navigation.</p></div><div class="definition"><p><a name="jobs"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-groups.html#jobs">jobs</a></span><span class="definition_result_arrow"> =&gt; </span><span class="p">[</span><span class="n">string</span><span class="p">]</span></pre></div><p><em>Optional.</em> A list of jobs that should appear in this group. A job may
+appear in multiple groups. Neighbours of jobs in the current group will also
+appear on the same page in order to give context of the location of the
+group in the pipeline.</p></div><div class="definition"><p><a name="resources"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-groups.html#resources">resources</a></span><span class="definition_result_arrow"> =&gt; </span><span class="p">[</span><span class="n">string</span><span class="p">]</span></pre></div><p><em>Optional.</em> A list of resources that should appear in this group.
+Resources that are inputs or outputs of jobs in the group are automatically
+added; they do not have to be explicitly listed here.</p></div><p>
+</p></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="pipelines.html">Piplines</a><ol><li><a href="configuring-resources.html"><code>resources</code>: Objects flowing through the pipeline</a></li><li><a href="configuring-jobs.html"><code>jobs</code>: Plans to execute against resources</a></li><li><a href="configuring-groups.html"><code>groups</code>: Splitting up your pipeline into sections</a></li></ol></li></ol></div></body></html>

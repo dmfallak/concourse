@@ -1,0 +1,1 @@
+var SEARCH_TAGS = [["do: run steps in series","<span class=\"title\"><a href=\"do-step.html\"><code>do</code>: run steps in series</a></span>","do-step.html"],["do-step","[HTMLElement(:code, {}, [\"do\"]), \": run steps in series\"]","do-step.html"],["do","<span class=\"tag\"><code><a href=\"do-step.html#do\">do</a></code></span>","do-step.html#do"]];

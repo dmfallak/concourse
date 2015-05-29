@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>conditions</code>: conditionally perform a step</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_step-conditions.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_step-conditions"><h1 class="section_header"><a name="step-conditions"></a><code>conditions</code>: conditionally perform a step</h1><p></p><p>Any step can be made conditional by adding the <code>conditions</code> attribute
+to it.</p><div class="definition"><p><a name="conditions"></a></p><div class="thumb"><pre><span class="n"><a href="step-conditions.html#conditions">conditions</a></span><span class="definition_result_arrow"> =&gt; </span><span class="p">[</span><span class="n">string</span><span class="p">]</span></pre></div><p><em>Optional. Default <code>[success]</code>.</em> The conditions under which to
+perform this step.</p><p><code>[failure]</code> causes the step to be performed if the previous step&#39;s
+task(s) fail, while <code>[success, failure]</code> means the step will be
+performed regardless of the result.</p></div><p>The following will perform the second task only if the first one fails:</p><pre class="verbatim">plan:
+- get: foo
+- task: unit
+  file: foo/unit.yml
+- conditions: [failure]
+  task: alert
+  file: foo/alert.yml</pre><p>If the condition does not match, the conditional step, and all subsequent
+steps, are not executed.</p><p>If you have multiple conditions you&#39;d like to check, you can wrap them in an
+<a href="aggregate-step.html"><code>aggregate</code> step</a>:</p><pre class="verbatim">plan:
+- get: foo
+- task: unit
+  file: foo/unit.yml
+- aggregate:
+  - conditions: [success]
+    task: update-status
+    file: foo/update-status.yml
+    params:
+      status: good
+  - conditions: [failure]
+    task: update-status
+    file: foo/update-status.yml
+    params:
+      status: bad</pre><p>This will attempt both steps in series, and continue runing the steps after
+the <code>aggregate</code> step regardless.
+</p></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="build-plans.html">Build Plans</a><ol><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol></li></ol></div></body></html>

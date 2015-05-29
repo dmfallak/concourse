@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>jobs</code>: Plans to execute against resources</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_configuring-jobs.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_configuring-jobs"><h1 class="section_header"><a name="configuring-jobs"></a><code>jobs</code>: Plans to execute against resources</h1><p></p><p><a href="configuring-groups.html#jobs">Jobs</a> determine the <em>actions</em> of your pipeline, how
+resources progress through it, and how everything is visualized. They are
+listed under the <code>jobs</code> key in the pipeline configuration.</p><p>The following example defines a simple unit-level job that will trigger
+whenever new code arrives at the <code>concourse</code> resource:</p><pre class="verbatim">jobs:
+- name: atc-unit
+  plan:
+  - get: concourse
+  - task: unit
+    file: concourse/ci/atc.yml</pre><p>Each configured job consists of the following attributes:</p><div class="definition"><p><a name="name"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-jobs.html#name">name</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> The name of the job. This should be short; it will show up
+in URLs.</p></div><div class="definition"><p><a name="serial"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-jobs.html#serial">serial</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">boolean</span></pre></div><p><em>Optional. Default <code>false</code>.</em> If set to @codetrue, builds will
+queue up and execute one-by-one, rather than executing in parallel.</p></div><div class="definition"><p><a name="serial-groups"></a></p><div class="thumb"><pre><span class="n">serial_groups</span><span class="definition_result_arrow"> =&gt; </span><span class="p">[</span><span class="n">string</span><span class="p">]</span></pre></div><p><em>Optional. Default <code>[]</code>.</em> When set to an array of arbitrary
+tag-like strings, builds of this job and other jobs referencing the same
+tags will be serialized.</p><p>This can be used to ensure that certain jobs do not run at the same time,
+like so:</p><pre class="verbatim">jobs:
+- name: job-a
+  serial_groups: [some-tag]
+- name: job-b
+  serial_groups: [some-tag, some-other-tag]
+- name: job-c
+  serial_groups: [some-other-tag]</pre><p>In this example, <code>job-a</code> and @codejob-c can run concurrently, but
+neither job can run builds at the same time as <code>job-b</code>.</p><p>The builds are executed in their order of creation, across all jobs with
+common tags.</p></div><div class="definition"><p><a name="public"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-jobs.html#public">public</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">boolean</span></pre></div><p><em>Optional. Default <code>false</code>.</em> If set to @codetrue, the build log
+of this job will be viewable by unauthenticated users. Unauthenticated users
+will always be able to see the inputs, outputs, and build status history of a
+job. This is useful if you would like to expose your pipeline publicly without
+showing sensitive information in the build log.</p></div><div class="definition"><p><a name="plan"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-jobs.html#plan">plan</a></span><span class="definition_result_arrow"> =&gt; </span><span class="p">[</span><span class="n">step</span><span class="p">]</span></pre></div><p><em>Required.</em> The <a href="build-plans.html">Build Plan</a> to execute.</p></div><p>
+</p></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="pipelines.html">Piplines</a><ol><li><a href="configuring-resources.html"><code>resources</code>: Objects flowing through the pipeline</a></li><li><a href="configuring-jobs.html"><code>jobs</code>: Plans to execute against resources</a></li><li><a href="configuring-groups.html"><code>groups</code>: Splitting up your pipeline into sections</a></li></ol></li></ol></div></body></html>

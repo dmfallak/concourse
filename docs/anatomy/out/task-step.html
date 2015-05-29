@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>task</code>: execute a task</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_task-step.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_task-step"><h1 class="section_header"><a name="task-step"></a><code>task</code>: execute a task</h1><p></p><p>Executes a <a href="tasks.html">Task</a>, either from a file fetched via the
+preceding steps, or with inlined configuration.</p><p>If any task in the build plan fails, the build will complete with failure. By
+default, any subsequent steps will not be performed. This can be configured by
+explicitly setting <a href="step-conditions.html"><code>conditions</code></a> on the step
+after the task.</p><p>For example, the following plan fetches a single repository and executes
+multiple tasks, using the <a href="aggregate-step.html"><code>aggregate</code></a> step,
+in a build matrix style configuration:</p><pre class="verbatim">plan:
+- get: my-repo
+- aggregate:
+  - task: go-1.3
+    file: my-repo/go-1.3.yml
+  - task: go-1.4
+    file: my-repo/ci/go-1.4.yml</pre><p>Only if both tasks succeed will the build go green.</p><p>When a task completes, its resulting file tree will be made available as a
+source named after the task. This allows subsequent steps to process the
+result of a task. For example, the follwing plan pulls down a repo, makes a
+commit to it, and pushes the commit to another repo:</p><pre class="verbatim">plan:
+- get: my-repo
+- task: commit
+  file: my-repo/commit.yml
+- put: other-repo
+  params:
+    repository: commit/my-repo</pre><div class="definition"><p><a name="task"></a></p><div class="thumb"><pre><span class="n"><a href="task-step.html#task">task</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> A freeform name for the task that&#39;s being executed. Common
+examples would be <code>unit</code> or @codeintegration.</p></div><div class="definition"><p><a name="|"></a></p><div class="thumb"><pre><span class="n">file</span><span class="t"> </span><span class="o"><a href="task-step.html#|">|</a></span><span class="t"> </span><span class="n">config</span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span><span class="t"> </span><span class="o"><a href="task-step.html#|">|</a></span><span class="t"> </span><span class="n">object</span></pre></div><p><em>At least one required.</em> The configuration for the task&#39;s running
+environment.</p><p><code>file</code> points at a @code.yml file containing the
+<a href="running-tasks.html#configuring-tasks">task config</a>, which allows this to be tracked
+with your resources.</p><p>The first segment in the path should refer to another source from the plan,
+and the rest of the path is relative to that source.</p><p>For example, if in your plan you have the following
+<a href="get-step.html"><code>get</code></a> step:</p><pre class="verbatim">- get: something</pre><p>And the <code>something</code> resource provided a @codeunit.yml file, you
+would set <code>file: something/unit.yml</code>.</p><p><code>config</code> can be defined to inline the task config statically.</p><p>If both <code>file</code> and @codeconfig are specified, the value of
+<code>config</code> is &quot;merged&quot; into the config loaded from the file. This allows
+task parameters to be specified in the task&#39;s config file, and overridden in
+the pipeline (i.e. for passing in secret credentials).</p></div><div class="definition"><p><a name="privileged"></a></p><div class="thumb"><pre><span class="n"><a href="task-step.html#privileged">privileged</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">boolean</span></pre></div><p><em>Optional. Default <code>false</code>.</em> If set to @codetrue, the task will
+run as <code>root</code> with full capabilities. This is not part of the task
+configuration to prevent privilege escalation via pull requests.</p><p>This is a gaping security hole; use wisely and only if necessary.</p></div><p>
+</p></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="build-plans.html">Build Plans</a><ol><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol></li></ol></div></body></html>

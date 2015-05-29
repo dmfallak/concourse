@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Jobs</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_jobs.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_jobs"><h1 class="section_header"><a name="jobs"></a>Jobs</h1><p>At a high level, a job describes some actions to perform when dependent
+resources change (or when manually triggered). For example, you may define a
+job that runs your unit tests whenever new code is pushed to a repository.</p><p>Jobs can be thought of as functions with inputs and outputs, that
+automatically run when new inputs are available. A job can depend on the
+outputs of upstream jobs, which is the root of pipeline functionality.</p><p>The definition of actions to perform is done via a
+<a href="build-plans.html">Build Plan</a>, which is a very powerful
+composition-based DSL that can express anything from running simple unit
+tests to running a matrix of tasks and aggregating the result.</p><p>
+</p><div class="section" id="section_job-builds"><h2 class="section_header"><a name="job-builds"></a>Builds</h2><p>An instance of execution of a job&#39;s plan is called a <em>build</em>. A build
+can either succeed or fail, or error if something unrelated to your code goes
+wrong (for example, if the resources fail to fetch).</p><p>When a build runs, the job&#39;s plan is realized. Each step described by the
+job&#39;s plan is executed, and so long as all <a href="tasks.html">Tasks</a> succeed, the
+build succeeds. If a task fails, the build fails, and its resources do not
+propagate to the rest of the pipeline.</p><p>Builds can be accessed while they&#39;re running (and also shortly after they
+finish) via <a href="fly-cli.html#fly-intercept"><code>fly intercept</code></a>, which can
+greatly help in debugging.</p></div></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>On this page:</h4><ol class="toc"><li><a href="jobs.html#job-builds">Builds</a></li></ol><h4>Up one level:</h4><ol class="toc"><li><a href="concepts.html">Concepts</a><ol><li><a href="tasks.html">Tasks</a><ol><li><a href="tasks.html#runtime-environment">Runtime Environment</a></li></ol></li><li><a href="resources.html">Resources</a></li><li><a href="jobs.html">Jobs</a><ol><li><a href="jobs.html#job-builds">Builds</a></li></ol></li></ol></li></ol></div></body></html>

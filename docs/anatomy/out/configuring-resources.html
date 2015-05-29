@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>resources</code>: Objects flowing through the pipeline</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_configuring-resources.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_configuring-resources"><h1 class="section_header"><a name="configuring-resources"></a><code>resources</code>: Objects flowing through the pipeline</h1><p></p><p><a href="configuring-groups.html#resources">Resources</a> are the objects that are going to be used
+for jobs in the pipeline. They are listed under the <code>resources</code> key in
+the pipeline configuration.</p><p>The following example defines a resource representing Concourse&#39;s BOSH
+release repository:</p><pre class="verbatim">resources:
+- name: concourse
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse.git</pre><p>Any time commits are pushed, the resource will detect them and save new
+versions of the resource. Any jobs immediately downstream of the resource
+will then be triggered with the latest version, potentially starting a
+chain of builds as it makes its way through the pipeline&#39;s jobs.</p><p>Resources can also be updated via a <a href="put-step.html"><code>put</code> step</a> in
+the pipeline&#39;s jobs.</p><p>Each configured resource consists of the following attributes:</p><div class="definition"><p><a name="name"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-resources.html#name">name</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> The name of the resource. This should be short and simple.
+This name will be referenced by <a href="build-plans.html">build plans</a> of jobs
+in the pipeline.</p></div><div class="definition"><p><a name="type"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-resources.html#type">type</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> The type of the resource. Each worker advertises a mapping
+of <code>resource-type -&gt; container-image</code>; @codetype corresponds to the
+key in the map.</p><p>To see what resource types your deployment supports, check the status of your
+worker pool via the <code>/api/v1/workers</code> API endpoint.</p></div><div class="definition"><p><a name="source"></a></p><div class="thumb"><pre><span class="n"><a href="configuring-resources.html#source">source</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">object</span></pre></div><p><em>Optional.</em> The location of the resource. This varies
+by resource type, and is a black box to Concourse; it is blindly passed to
+the resource at runtime.</p><p>To use <code>git</code> as an example, the source may contain the repo URI, the
+branch of the repo to track, and a private key to use when pushing/pulling.</p><p>By convention, documentation for each resource type&#39;s configuration is
+in each implementation&#39;s <code>README</code>.</p><p>You can find the source for the resource types provided with Concourse at the
+<a href="https://github.com/concourse?query=-resource">Concourse GitHub
+    organization</a>.</p></div><p>
+</p></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="pipelines.html">Piplines</a><ol><li><a href="configuring-resources.html"><code>resources</code>: Objects flowing through the pipeline</a></li><li><a href="configuring-jobs.html"><code>jobs</code>: Plans to execute against resources</a></li><li><a href="configuring-groups.html"><code>groups</code>: Splitting up your pipeline into sections</a></li></ol></li></ol></div></body></html>

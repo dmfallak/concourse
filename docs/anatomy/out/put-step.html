@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title><code>put</code>: update a resource</title><link type="text/css" rel="stylesheet" href="public/anatomy.css" /><link type="text/css" rel="stylesheet" href="public/highlight.css" /><script type="text/javascript" src="public/jquery.js"></script><script type="text/javascript" src="public/jquery.hotkeys.js"></script><script type="text/javascript" src="public/tags_put-step.js"></script><script type="text/javascript" src="public/main.js"></script></head><body class="normal"><div id="main"><div id="content"><div class="section" id="section_put-step"><h1 class="section_header"><a name="put-step"></a><code>put</code>: update a resource</h1><p></p><p>Pushes to the given <a href="resources.html">Resource</a>. All artifacts collected
+during the plan&#39;s execution will be available in the working directory.</p><p>For example, the following plan fetches a repo using
+<a href="get-step.html"><code>get</code></a> and pushes it to another repo (assuming
+<code>repo-a</code> and @coderepo-b are defined as @codegit resources):</p><pre class="verbatim">plan:
+- get: repo-a
+- put: repo-b
+  params:
+    repository: repo-a</pre><p>When the <code>put</code> succeeds, the produced version of the resource will be
+immediately fetched via an implicit <a href="get-step.html"><code>get</code>: fetch a resource</a> step. This is so that
+later steps in your plan can use the artifact that was produced. The source
+will be available under whatever name <code>put</code> specifies, just like as with
+<code>get</code>.</p><p>So, if the logical name (whatever <code>put</code> specifies) differs from the
+concrete resource, you would specify <code>resource</code> as well, like so:</p><pre class="verbatim">plan:
+- put: resource-image
+  resource: docker-image-resource</pre><div class="definition"><p><a name="put"></a></p><div class="thumb"><pre><span class="n"><a href="put-step.html#put">put</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Required.</em> The logical name of the resource being pushed. The pushed
+resource will be available under this name after the push succeeds.</p></div><div class="definition"><p><a name="resource"></a></p><div class="thumb"><pre><span class="n"><a href="put-step.html#resource">resource</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">string</span></pre></div><p><em>Optional. Defaults to <code>name</code>.</em> The resource to update,
+as configured in <a href="configuring-resources.html"><code>resources</code></a>.</p></div><div class="definition"><p><a name="params"></a></p><div class="thumb"><pre><span class="n"><a href="put-step.html#params">params</a></span><span class="definition_result_arrow"> =&gt; </span><span class="n">object</span></pre></div><p><em>Optional.</em> A map of arbitrary configuration to forward to the
+resource. Refer to the resource type&#39;s documentation to see what it
+supports.</p></div></div></div></div><div class="search"><form action="javascript:void(0)"><input type="text" placeholder="Search&hellip;" autocomplete="off" id="search" /></form><ul class="search_results"></ul></div><div id="sidebar"><h4>Up one level:</h4><ol class="toc"><li><a href="build-plans.html">Build Plans</a><ol><li><a href="get-step.html"><code>get</code>: fetch a resource</a></li><li><a href="put-step.html"><code>put</code>: update a resource</a></li><li><a href="task-step.html"><code>task</code>: execute a task</a></li><li><a href="aggregate-step.html"><code>aggregate</code>: run steps in parallel</a></li><li><a href="do-step.html"><code>do</code>: run steps in series</a></li><li><a href="step-conditions.html"><code>conditions</code>: conditionally perform a step</a></li></ol></li></ol></div></body></html>
